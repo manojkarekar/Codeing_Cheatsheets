@@ -1,0 +1,876 @@
+
+------------------------------------Django CheatSheet----------------------------------------------------------------------
+----------------------------------------------------------------------------------------
+1. Django Basics
+----------------------------------------------------------------------------------------
+
+
+----------------------------------------------------------------------------------------
+2 
+
+----------------------------------------------------------------------------------------
+To use Django, you first need to install it. This is usually done via pip (Python's package manager).
+
+Steps for Installation:
+1. Install Python: Django requires Python to be installed. You can download it from python.org.
+
+2. Create a Virtual Environment (optional but recommended):
+
+--> python -m venv myenv
+
+Activate the virtual environment:
+--> myenvy
+
+3. Install Django: Run the following command to install Django via pip:
+--> pip install django
+
+4. Check Installation: Once installed, verify it by checking the Django version:
+--> django-admin --version
+
+----------------------------------------------------------------------------------------
+3. HTTP protocol
+----------------------------------------------------------------------------------------
+The HTTP (HyperText Transfer Protocol) is a protocol used for communication between web 
+browsers and web servers. Django, being a web framework, relies on HTTP to handle
+incoming requests and send back responses.
+
+Request: A request is initiated when the user interacts with a website
+ (e.g., clicking a link or submitting a form). Django processes these requests.
+ 
+Response: Django sends a response back to the browser. This could be 
+HTML, JSON, or even a file.
+
+HTTP Methods in Django: GET, POST, and Other HTTP Methods
+GET Method
+The GET method is used to retrieve data from the server.
+It is the most common HTTP method, and it is used to request resources 
+(web pages, files, or data) from the server without modifying them.
+
+Example:
+from django.http import HttpResponse
+from django.shortcuts import render
+
+def search_view(request):
+    query = request.GET.get('q', '')  # Get the query parameter 'q'
+    results = search(query)  # Perform a search based on the query
+    return render(request, 'search_results.html', {'results': results})
+
+
+POST Method:
+The POST method is used to submit data to the server for processing, such as submitting a
+form, creating a new record, or updating data.
+POST is often used for operations that change the state of the server or resource, like 
+creating or updating data.
+
+Example:
+from django.shortcuts import render, redirect
+from .forms import PostForm
+
+def post_create(request):
+    if request.method == 'POST':
+        form = PostForm(request.POST)  # Get the submitted data
+        if form.is_valid():
+            form.save()  # Save the new post
+            return redirect('post_list')  # Redirect after successful POST
+    else:
+        form = PostForm()
+    return render(request, 'post_form.html', {'form': form})
+
+PUT Method
+The PUT method is used to update an existing resource on the server. It completely replaces
+the resource with the new data provided in the request.
+PUT is generally used to update an existing record (like updating a user's profile).
+
+Example:
+
+
+DELETE Method
+The DELETE method is used to delete a resource from the server.
+It removes the specified resource, and this action cannot be undone (unless you implement
+some form of "undo" functionality).
+
+Example:
+
+
+PATCH Method
+The PATCH method is used for partially updating an existing resource. Unlike PUT, which 
+replaces the entire resource, PATCH only modifies specific fields.
+It’s often used for updating specific fields (e.g., updating only the title of a post).
+----------------------------------------------------------------------------------------
+4. MVC model
+----------------------------------------------------------------------------------------
+Django follows a pattern called MTV (Model-Template-View), which is a slight variation 
+of the traditional MVC (Model-View-Controller) design pattern. However, understanding
+how MVC works helps to Django structures its web applications.
+
+Model: Represents the data structure. It defines the schema for the database, such as
+tables and relationships.
+
+Template: Refers to the presentation layer (the HTML). It is responsible for rendering
+the UI, and can include static files (like CSS, JavaScript).
+
+View: In Django, views are the logic layer. They are responsible for processing user 
+requests, interacting with the model, and returning the appropriate response.
+
+MVC vs MTV:
+In traditional MVC, the controller is responsible for handling user input and coordinating 
+the flow of data between the model and the view. In MTV, the view serves the role 
+of the controller, processing the logic and communicating with the model.
+
+----------------------------------------------------------------------------------------
+5. virtual Environment and Create Django Project
+----------------------------------------------------------------------------------------
+1. Create a Virtual Environment:
+Run the following command to create a virtual environment:
+--> python -m venv env
+
+2. Activate the Virtual Environment:
+--> .\env\Scripts\activate
+
+3. Install Django and other dependencies:
+With the virtual environment activated, you can install Django:
+--> pip install django
+
+4. Deactivate the Virtual Environment:
+When you're done working on the project, you can deactivate the virtual environment by 
+simply running:
+--> deactivate
+
+5. Create a Django Project:
+Once Django is installed, you can create a new Django project. Run the following command to
+create a new project (replace myproject with your desired project name
+
+--> django-admin startproject myproject
+
+* Starting the Django Development Server: To start the server and run your project locally,
+navigate to the myproject directory and run:
+--> python manage.py runserver
+----------------------------------------------------------------------------------------
+6. Django Project and App Structure
+----------------------------------------------------------------------------------------
+my_project/
+│
+├── manage.py                # Command-line utility for project management
+├── my_project/              # Project directory (contains settings.py, urls.py, etc.)
+│   ├── __init__.py
+│   ├── settings.py          # Project settings (e.g., database settings, installed apps)
+│   ├── urls.py              # URL routing for the entire project
+│   ├── asgi.py              # ASGI   configuration (for asynchronous applications)
+│   ├── wsgi.py              # WSGI configuration (for synchronous web servers)
+│
+├── app1/                    # A Django app (you can have multiple apps)
+│   ├── migrations/          # Database migrations for app
+│   ├── __init__.py
+│   ├── admin.py             # Admin interface configuration for models in the app
+│   ├── apps.py              # App configuration
+│   ├── models.py            # Database models for the app
+│   ├── views.py             # Views to handle HTTP requests
+│   ├── urls.py              # URL routing for app-specific endpoints
+│   ├── templates/           # HTML templates for the app
+│   ├── static/              # Static files (CSS, JS, images) for the app
+│   └── tests.py             # Unit tests for the app
+│
+├── db.sqlite3               # SQLite database (or another database if configured)
+└── requirements.txt         # List of external dependencies (libraries) required
+
+1. manage.py:
+This is the command-line utility for managing your Django project. You use it to run the 
+development server, make migrations, and perform other administrative tasks.
+
+
+2. my_project/ (Project Directory):
+
+
+2.1 : This is the container for all your settings, configurations, and routing for the 
+Django project as a whole.
+
+2.2 : settings.py: Contains settings for the entire project (e.g., database settings, 
+installed apps, middleware, static files configuration, and much more
+
+2.3 : urls.py: Contains URL routing for the entire project. This is where you include 
+the URLs for each app in the project.
+
+2.4 : asgi.py & wsgi.py: These files are configurations for the ASGI and WSGI servers. 
+ASGI is for asynchronous applications (useful for handling real-time communications), while
+WSGI is for standard synchronous web applications
+ 
+2.4 : __init__.py: Marks this directory as a Python package.
+
+
+3.App Directory (e.g., app1/):
+
+3.1: A Django app is a module that handles specific functionality within the project.
+You can have multiple apps in a project.
+
+Inside each app, the files and folders serve specific purposes:
+3.2: models.py: Contains the data models for the app, i.e., the structure of the database 
+tables.
+3.3: views.py: Defines the views that handle the business logic for the app. Views are 
+functions or classes that take a web request and return a web response.
+3.4: urls.py: Defines the URL patterns for the app. These are the endpoints that link URLs
+to views within the app.
+3.5: admin.py: Registers the app’s models in the Django admin interface for easy management.
+3.6: apps.py: Contains the configuration for the app (e.g., its name, label).
+3.7: templates/: Contains HTML templates used by the views to render content.
+3.8: static/: Houses the static files (CSS, JS, images) that are linked to the app's
+templates.
+3.9: tests.py: Contains unit tests for the app.
+
+
+4. migrations/:
+
+
+This folder stores migration files, which Django uses to manage changes in the database 
+schema over time. Each migration represents a change in your models that needs to be applied 
+to the database.
+
+5. db.sqlite3 (or another database file):
+
+
+This is the database file where your application stores data. By default, Django uses SQLite,
+but it can be configured to use other databases such as PostgreSQL or MySQL.
+
+
+6.requirements.txt:
+
+
+This file lists all the Python packages required for the project. You can generate it by 
+running:
+-->pip freeze > requirements.txt
+
+----------------------------------------------------------------------------------------
+7. Django App Structure 
+----------------------------------------------------------------------------------------
+app_name/
+├── migrations/              # Stores database migrations for app models
+├── __init__.py
+├── admin.py                 # Admin interface for app's models
+├── apps.py                  # App configuration
+├── models.py                # Models (database structure)
+├── views.py                 # Views (logic for handling requests)
+├── urls.py                  # URL routing for the app
+├── templates/               # HTML files
+│   └── app_name/            # Templates for the app
+├── static/                  # Static files (CSS, JS, images)
+│   └── app_name/            # Static files for the app
+└── tests.py                 # Tests for the app's functionality
+
+
+7.1 models.py:
+Contains classes that define the structure of your database. These classes are subclasses
+of django.db.models.Model, and Django automatically creates database tables based on these 
+models.
+
+7.2 views.py:
+Contains the functions or classes that handle HTTP requests and return HTTP responses. Views
+can render templates, redirect users, or return JSON data.
+
+7.3 urls.py:
+Defines the routes for the app. Each view in views.py is associated with a URL in this file.
+In the main project’s urls.py, you will include the app’s urls.py to link the app’s routes 
+to the project’s routing system.
+
+7.4 templates:
+Contains HTML files that define the user interface. These templates are rendered by views 
+and are often populated with dynamic content.
+
+7.5 static/:
+Houses static files (like CSS, JavaScript, and images) that are served to the client. Django
+provides a static file handler to serve these during development.
+
+7.6 admin.py:
+Registers the app’s models in Django’s admin interface. This provides an easy-to-use backend 
+UI to manage the data stored in your models.
+
+7.7 tests.py:
+Contains unit tests that help ensure the app behaves as expected. Django includes a built-in 
+test framework based on Python’s unittest
+
+
+
+----------------------------------------------------------------------------------------
+                                     8. Views in Django 
+----------------------------------------------------------------------------------------
+
+
+8.1 Function-Based Views (FBVs):
+Definition: FBVs are the simplest form of views in Django. They are Python functions that
+take an HTTP request and return an HTTP response.
+
+Example:
+from django.http import HttpResponse
+from django.shortcuts import render
+from .models import Post
+
+def post_list(request):
+    posts = Post.objects.all()  # Query all posts
+    return render(request, 'post_list.html', {'posts': posts})  # Render template with posts
+
+
+8.2 Class-Based Views (CBVs) :
+Definition: CBVs provide a more organized and reusable way of writing views. A class is
+created to represent a view and its methods (like get(), post()) handle different HTTP 
+requests.
+
+Example:
+from django.http import HttpResponse
+from django.views import View
+from .models import Post
+
+class PostListView(View):
+    def get(self, request):
+        posts = Post.objects.all()  # Query all posts
+        return render(request, 'post_list.html', {'posts': posts})  # Render template with posts
+
+
+8.3 Generic Views :
+Definition: Generic views in Django are specialized class-based views (CBVs) that handle 
+common patterns (like displaying a list of objects or handling a form submission). 
+They reduce boilerplate code and provide built-in functionality.
+
+Django provides pre-defined classes such as ListView, DetailView, CreateView, UpdateView,
+DeleteView, etc., to handle common use cases.
+
+Example:
+from django.views.generic import ListView
+from .models import Post
+
+class PostListView(ListView):
+    model = Post
+    template_name = 'post_list.html'  # Template for displaying the posts
+
+
+
+----------------------------------------------------------------------------------------
+                                  9.Urls in Django 
+----------------------------------------------------------------------------------------
+
+
+
+9.1 Basic URL Structure
+A URL pattern in Django is a string that defines how the request URL should be mapped to a 
+specific view function or class. These URL patterns are typically stored in a urls.py file 
+inside your Django app or project.
+
+Example:
+from django.urls import path
+from . import views  # Importing views from the current app
+
+urlpatterns = [
+    path('home/', views.home_view, name='home'),  # Maps the URL 'home/' to the home_view
+]
+
+9.2. Types of URLs in Django
+a. Static URLs
+Static URLs are used to serve static files like images, CSS, and JavaScript files. These 
+URLs are typically defined outside of app-specific URL patterns and are configured in the 
+project’s urls.py.
+
+Example:
+from django.conf import settings
+from django.conf.urls.static import static
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    # Add other app URLs here
+] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+
+b. Dynamic URLs
+Dynamic URLs are URLs that include variable parts, usually denoted by angle brackets (< >).
+These URL patterns capture data from the URL and pass it as arguments to the view function.
+
+Example:
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('post/<int:id>/', views.post_detail, name='post_detail'),
+]
+
+c. URL with Named Parameters
+You can name the variables in your URL pattern to make it more readable and accessible.
+
+Example:
+from django.urls import path
+from . import views
+
+urlpatterns = [
+    path('category/<str:category_name>/', views.category_view, name='category_view'),
+]
+
+e. Include Other URL Confs
+Django allows you to include URLs from other apps or modular URL files using include().
+This helps in breaking down URL configurations into manageable pieces for each app.
+
+Example:
+from django.contrib import admin
+from django.urls import path, include
+
+urlpatterns = [
+    path('admin/', admin.site.urls),
+    path('blog/', include('blog.urls')),  # Includes URLs from the 'blog' app
+]
+
+f. View-based URL Mapping
+URLs can directly link to Django class-based views (CBVs) using the as_view() method. This 
+approach is commonly used when you want to map a view to a class-based view without writing
+from django.urls import path
+a separate function.
+
+Example:
+from .views import PostListView, PostDetailView
+
+urlpatterns = [
+    path('posts/', PostListView.as_view(), name='post_list'),
+    path('post/<int:id>/', PostDetailView.as_view(), name='post_detail'),
+]
+
+9.3 URL Namespaces
+Namespaces help group URLs from different apps that may have the same URL name.
+You can give a prefix to your URLs to avoid conflicts.
+
+Example:
+from django.urls import path, include
+
+urlpatterns = [
+    path('blog/', include('blog.urls', namespace='blog')),  # Namespace added here
+]
+
+
+
+
+
+-------------------------------------------------------------------------------------------
+                                   10. Models in Django :
+--------------------------------------------------------------------------------------------
+
+
+
+
+In Django, models are Python classes that define the structure of your database tables. 
+They represent the data of your application and are used to create, read, update, and delete 
+records in your database.
+
+1. Defining a Model
+A model is defined as a Python class that subclasses django.db.models.Model. Each attribute
+of the model class represents a field in the database table.
+
+Example:
+from django.db import models
+
+class Article(models.Model):
+    title = models.CharField(max_length=100)
+    content = models.TextField()
+    published_date = models.DateTimeField(auto_now_add=True)
+    author = models.CharField(max_length=100)
+
+    def __str__(self):
+        return self.title
+
+
+Types of Fields in Django Models:
+1. CharField: Used for short text fields (e.g., titles, names).
+title = models.CharField(max_length=100)
+
+
+TextField: Used for long text fields (e.g., article content).
+content = models.TextField()
+
+
+IntegerField: Used for storing integer values.
+age = models.IntegerField()
+
+
+FloatField: Used for storing floating-point numbers.
+price = models.FloatField()
+
+
+DateField/DateTimeField: Used for storing dates and times.
+published_date = models.DateTimeField(auto_now_add=True)
+
+
+BooleanField: Used for storing True/False values.
+is_active = models.BooleanField(default=True)
+
+
+ForeignKey: Used for creating relationships between models (one-to-many).
+author = models.ForeignKey('Author', on_delete=models.CASCADE)
+
+
+ManyToManyField: Used for many-to-many relationships between models.
+tags = models.ManyToManyField('Tag')
+
+
+OneToOneField: Used for one-to-one relationships between models.
+profile = models.OneToOneField('Profile', on_delete=models.CASCADE)
+
+
+
+Migrations in Django :
+1. Create migrations: This generates migration files that describe the changes to the 
+database schema.
+--> python manage.py makemigrations
+
+2. Apply migrations: This applies the generated migration files to the database.
+--> python manage.py migrate
+
+3. Viewing migrations: You can see the migration history using:
+--> python manage.py showmigrations
+
+
+
+----------------------------------------------------------------------------------------
+							Django Template Language (DTL):
+----------------------------------------------------------------------------------------
+
+Django Template Language (DTL) is a lightweight templating engine used in Django to render 
+dynamic HTML content. It allows you to display data from your views in templates and 
+provides various features to help with creating dynamic content. DTL is designed to be
+easy to use and includes features like variables, filters, tags, loops, and conditionals.
+
+Here’s a breakdown of the key concepts and features of DTL.
+
+1. Basic Syntax
+Variables:
+Variables are placeholders that get replaced with actual values from the context in the views.
+Variables are wrapped in double curly braces {{ }}.
+
+
+
+
+
+
+
+* Template Inheritance:
+Base Template (base.html):
+<!DOCTYPE html>
+<html>
+<head>
+    <title>{% block title %}My Site{% endblock %}</title>
+</head>
+<body>
+    <header>
+        <h1>Welcome to my website</h1>
+        <nav>
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/about/">About</a></li>
+            </ul>
+        </nav>
+    </header>
+    <main>
+        {% block content %}{% endblock %}
+    </main>
+    <footer>
+        <p>&copy; 2025 My Website</p>
+    </footer>
+</body>
+</html>
+
+
+
+Child Template (home.html):
+{% extends 'base.html' %}
+
+{% block title %}Home Page{% endblock %}
+
+{% block content %}
+    <h2>Welcome to the Home Page!</h2>
+    <p>Here is some introductory content.</p>
+{% endblock %}
+
+
+2. Template Tags
+Django templates use tags, which are enclosed in {% %}. Tags provide logic and control 
+flow in templates, such as loops and conditionals.
+
+Common Template Tags:
+
+
+1. {% for %} Loop:
+The {% for %} tag is used to loop over a list of items in the template.
+
+Example:
+
+<ul>
+    {% for item in items %}
+        <li>{{ item }}</li>
+    {% empty %}
+        <li>No items available.</li>
+    {% endfor %}
+</ul>
+
+
+
+2. {% if %} Conditional:
+The {% if %} tag is used for conditional logic in templates.
+
+Example:
+
+{% if user.is_authenticated %}
+    <p>Welcome, {{ user.username }}!</p>
+{% else %}
+    <p>Please log in to continue.</p>
+{% endif %}
+
+3. {% block %}:
+The {% block %} tag is used in the base template to define a placeholder where child 
+templates can insert content.
+
+Example:
+{% block content %}
+    <p>Default content</p>
+{% endblock %}
+
+
+4.The {% include %} tag allows you to include another template into the current template.
+Example:
+{% include 'header.html' %}
+
+
+5.{% url %}:
+The {% url %} tag is used to reverse resolve URLs in Django templates based on URL patterns.
+
+
+
+3. Filters
+
+1. date Filter:
+The date filter is used to format a date field.
+
+Example:
+<p>Published on: {{ article.publish_date|date:"F j, Y" }}</p>
+
+
+2. length Filter:
+The length filter returns the length of a list or string.
+
+Example:
+<p>Number of items: {{ items|length }}</p>
+
+
+3.lower and upper Filters:
+These filters convert a string to lowercase or uppercase.
+<p>{{ name|lower }}</p>  <!-- Converts to lowercase -->
+<p>{{ name|upper }}</p>  <!-- Converts to uppercase -->
+
+
+
+4. Static Files
+Django provides a {% static %} tag to serve static files (e.g., CSS, JavaScript, images). 
+This is particularly useful for linking to static assets like stylesheets or scripts in your
+HTML templates.
+ 
+Usage of {% static %} tag:
+<link rel="stylesheet" href="{% static 'css/style.css' %}">
+<script src="{% static 'js/app.js' %}"></script>
+
+
+Make sure to load static files at the top of your template:
+{% load static %}
+
+----------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------
+* Router's
+----------------------------------------------------------------------------------------
+* Models 
+----------------------------------------------------------------------------------------
+* Templates
+----------------------------------------------------------------------------------------
+* Queryset Models
+----------------------------------------------------------------------------------------
+* Staticfils in Django
+----------------------------------------------------------------------------------------
+* Deployment of Django
+----------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------
+
+----------------------------------------------------------------------------------------
+
+
+
+
+------------------------------------------Models in Django -------------------------------------
+1. CharField:
+------------------------------------
+# Usage: Stores short text strings (e.g., names, titles).
+
+# Parameters:
+------------------------------------
+max_length: Required, defines the maximum length of the string.
+
+Ex: title = models.CharField(max_length=200)
+
+2. TextField:
+------------------------------------
+Usage: Stores large text fields, such as paragraphs or descriptions (no length limit).
+
+Ex. content = models.TextField()
+
+3. IntegerField
+------------------------------------
+Usage: Stores integer values.
+Ex. age = models.IntegerField()
+
+4. BigIntegerField
+------------------------------------
+Usage: Stores very large integer values (larger than IntegerField).
+Ex. big_number = models.BigIntegerField()
+
+5. FloatField
+------------------------------------
+Usage: Stores floating-point numbers (decimals).
+
+6. DecimalField
+-------------------------------------
+# Usage: Stores fixed-point decimal numbers (e.g., for monetary values).
+
+# Parameters:
+1. max_digits: Total number of digits (both integer and decimal places).
+2. decimal_places: Number of decimal places.
+
+7. BooleanField
+------------------------------------
+Usage: Stores a True or False value
+
+Ex. is_active = models.BooleanField(default=True)
+
+9. DateField
+------------------------------------
+# Usage: Stores a date (year, month, day).
+# Parameters:
+1. auto_now: Automatically set to the current date when the object is created or updated.
+2. auto_now_add: Automatically set to the current date when the object is created.
+
+Ex. birth_date = models.DateField()
+
+10. DateTimeField
+------------------------------------
+# Usage: Stores a date and time (year, month, day, hour, minute, second).
+
+# Parameters:
+auto_now: Automatically set to the current timestamp when the object is created or updated.
+auto_now_add: Automatically set to the current timestamp when the object is created.
+
+------------------------------------
+11. TimeField
+Usage: Stores a time (hour, minute, second).
+Example
+
+------------------------------------
+12. DurationField
+Usage: Stores a period of time, represented as a timedelta object.
+
+------------------------------------
+13. EmailField
+Usage: Stores an email address. This field is a CharField with additional validation to ensure 
+the input is a valid email.
+
+------------------------------------
+14. FileField
+Usage: Stores a file. This field is used for uploading files (images, PDFs, etc.).
+Parameters:
+upload_to: Directory where the file will be stored.
+
+Ex. resume = models.FileField(upload_to='resumes/')
+
+------------------------------------
+15. ImageField
+Usage: Stores an image. This is a specialized FileField with additional validation for image files.
+Parameters:
+upload_to: Directory where the image will be stored.
+
+Ex. profile_picture = models.ImageField(upload_to='profile_pics/')
+
+------------------------------------
+16. URLField
+Usage: Stores a URL. This field is a CharField with validation to ensure the input is a valid URL.
+
+Ex. website = models.URLField()
+
+------------------------------------
+17. UUIDField
+Usage: Stores a universally unique identifier (UUID). It is commonly used to store unique keys
+or tokens.
+Parameters:
+default: Set to uuid.uuid4() for automatic UUID generation.
+
+Ex.id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+
+------------------------------------
+18. ForeignKey
+Usage: Defines a one-to-many relationship (i.e., one model is related to multiple instances of 
+another model).
+
+Parameters:
+to: The related model.
+on_delete: What to do when the related object is deleted (e.g., models.CASCADE, models.SET_NULL).
+
+Ex. author = models.ForeignKey('Author', on_delete=models.CASCADE)
+------------------------------------
+19. ManyToManyField
+Usage: Defines a many-to-many relationship (i.e., one model can be related to many instances
+ of another model).
+Parameters:
+to: The related model.
+
+Ex. categories = models.ManyToManyField('Category')
+
+------------------------------------
+20. OneToOneField
+Usage: Defines a one-to-one relationship (i.e., one model is related to exactly one 
+instance of another model).
+Parameters:
+to: The related model.
+on_delete: What to do when the related object is deleted.
+
+Ex. user_profile = models.OneToOneField(User, on_delete=models.CASCADE)
+
+------------------------------------
+21. JSONField (Available from Django 3.1)
+Usage: Stores JSON-encoded data. This is useful for storing dynamic data such as configurations
+ or settings.
+
+Ex. metadata = models.JSONField()
+
+------------------------------------
+22. BinaryField
+Usage: Stores raw binary data (e.g., images, files).
+
+Ex. file_data = models.BinaryField()
+
+------------------------------------
+23. SlugField
+Usage: Stores short labels for URLs, often used in creating SEO-friendly URLs.
+Parameters:
+unique: Ensures the slug is unique.
+
+Ex. slug = models.SlugField(unique=True)
+------------------------------------
+24. ArrayField (PostgreSQL-specific)
+Usage: Stores an array of values (only available in PostgreSQL).
+
+Ex. tags = models.ArrayField(models.CharField(max_length=100))
+
+------------------------------------
+25. XMLField (Django 3.0+)
+Usage: Stores XML data.
+
+Ex. xml_data = models.XMLField()
+
+------------------------------------
+26. IPAddressField
+Usage: Stores an IP address (IPv4).
+
+Ex. ip_address = models.IPAddressField()
+
+------------------------------------Django Rest Framework-------------------------------------
+What is DRF in Django?
+Django Rest Framework (DRF) is a powerful and flexible toolkit for building Web APIs in Django, 
+a high-level Python web framework. DRF simplifies the process of building, consuming, and managing
+APIs by providing essential tools like serializers, viewsets, authentication, permissions, and 
+more. It helps you create RESTful APIs efficiently and with minimal code.

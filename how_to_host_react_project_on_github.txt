@@ -1,0 +1,43 @@
+step 1 : create a github repository and push your code in Github 
+
+step 2 : Update vite.config.js
+1. Open vite.config.js.
+1. Set the base option to match the repository name (e.g., /react_project/).
+
+// Vite configuration for GitHub Pages
+	export default defineConfig({
+	  base: "/react_project/",  // Set this to your GitHub repository name
+	  build: {
+		outDir: 'dist',  // The directory where build files will be output
+	  },
+	  plugins: [react()],  // React plugin for Vite
+	})
+	
+step 3 : Update package.json
+1. Open package.json.
+2. Add the homepage field with your GitHub Pages URL.
+
+"homepage": "https://manojkarekar.github.io/react_project_host"
+"name": "react_project_host",
+
+//write this key and value inside scripts
+"predeploy": "npm run build",      // Build the app before deploying
+"deploy": "gh-pages -d dist", 
+
+
+
+step 4: Install Dependencies
+Make sure to install gh-pages and any other required dependencies:
+-->  npm install --save-dev gh-pages
+
+step 5 : Build the Project
+Use the following command to generate the production build:
+--> npm run build
+
+
+step 6 : Deploy the Project
+--> npm run deploy
+
+Use the deploy script to deploy your app to GitHub Page
+
+ 
